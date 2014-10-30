@@ -1,0 +1,19 @@
+{
+    "undef":true,
+    "camelcase":true,
+    "unused":true,
+    "curly":true,
+    "indent":4,
+    "eqeqeq":true,
+    "devel":true,
+    "node": true,
+    "globals":{
+        "chai":true,
+        "describe":true,
+        "beforeEach":true,
+        "before":true,
+        "afterEach":true,
+        "after": true,
+        "it":true
+    }
+}

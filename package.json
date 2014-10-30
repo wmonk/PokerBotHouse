@@ -1,0 +1,39 @@
+{
+  "name": "circleci-gif-bot",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./app/bin/www",
+    "test": "grunt"
+  },
+  "dependencies": {
+    "body-parser": "^1.9.2",
+    "cookie-parser": "~1.3.2",
+    "debug": "^2.1.0",
+    "express": "^4.10.1",
+    "handlebars": "^2.0.0",
+    "hbs": "~2.7.0",
+    "morgan": "^1.4.1",
+    "serve-favicon": "^2.1.6"
+  },
+  "devDependencies": {
+    "chai": "^1.9.1",
+    "glob": "^4.0.5",
+    "grunt": "^0.4.5",
+    "grunt-autoprefixer": "^1.0.1",
+    "grunt-browserify": "^3.1.0",
+    "grunt-concurrent": "^1.0.0",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-imagemin": "^0.9.1",
+    "grunt-contrib-sass": "^0.8.1",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-env": "^0.4.1",
+    "grunt-mocha-test": "^0.11.0",
+    "grunt-newer": "^0.8.0",
+    "grunt-supervisor": "^0.2.4",
+    "jit-grunt": "^0.9.0",
+    "lodash": "^2.4.1",
+    "mocha": "^2.0.1",
+    "time-grunt": "^1.0.0"
+  }
+}
