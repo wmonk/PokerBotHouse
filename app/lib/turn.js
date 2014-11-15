@@ -30,7 +30,7 @@ function turn(player, finish) {
 		});
 }
 
-function getMove(player) {
+function getMove() {
 	var moves = ['BET', 'FOLD'];
 
 	return Promise.resolve(moves[Math.floor(random() * moves.length)]);

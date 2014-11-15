@@ -14,15 +14,16 @@ describe('When a game is played', function () {
 		return min + rnd * (max - min);
 	};
 
+	turn = proxyquire('../app/lib/turn', {
+		'./random': random
+	});
+
+	Game = proxyquire('../app/lib/game', {
+		'./turn': turn
+	});
+
 	it('should be a draw when seed is 3', function (done) {
 		Math.seed = 3;
-		turn = proxyquire('../app/lib/turn', {
-			'./random': random
-		});
-
-		Game = proxyquire('../app/lib/game', {
-			'./turn': turn
-		});
 
 		var gameUnderTest = new Game({
 			hands: 10,
@@ -43,13 +44,6 @@ describe('When a game is played', function () {
 
 	it('should be won by Alex when seed is 1', function (done) {
 		Math.seed = 1;
-		turn = proxyquire('../app/lib/turn', {
-			'./random': random
-		});
-
-		Game = proxyquire('../app/lib/game', {
-			'./turn': turn
-		});
 
 		var gameUnderTest = new Game({
 			hands: 10,
@@ -70,13 +64,6 @@ describe('When a game is played', function () {
 
 	it('should be won by Will when seed is 5', function (done) {
 		Math.seed = 5;
-		turn = proxyquire('../app/lib/turn', {
-			'./random': random
-		});
-
-		Game = proxyquire('../app/lib/game', {
-			'./turn': turn
-		});
 
 		var gameUnderTest = new Game({
 			hands: 10,
