@@ -1,28 +1,31 @@
 require('chai').should();
 var proxyquire = require('proxyquire');
 var Game;
+var turn;
 
 describe('When a game is played', function () {
-	var turn = proxyquire('../app/lib/turn', {
-		'./random': function (max, min) {
-			max = max || 1;
-			min = min || 0;
+	var random = function (max, min) {
+		max = max || 1;
+		min = min || 0;
 
-			Math.seed = (Math.seed * 9301 + 49297) % 233280;
-			var rnd = Math.seed / 233280;
+		Math.seed = (Math.seed * 9301 + 49297) % 233280;
+		var rnd = Math.seed / 233280;
 
-			return min + rnd * (max - min);
-		}
-	});
+		return min + rnd * (max - min);
+	};
 
-	Game = proxyquire('../app/lib/game', {
-		'./turn': turn
-	});
+	it('should be a draw when seed is 3', function (done) {
+		Math.seed = 3;
+		turn = proxyquire('../app/lib/turn', {
+			'./random': random
+		});
 
-	it.only('should be a draw when seed is 1', function (done) {
-		Math.seed = 5;
+		Game = proxyquire('../app/lib/game', {
+			'./turn': turn
+		});
 
 		var gameUnderTest = new Game({
+			hands: 10,
 			players: [{
 				name: 'Alex'
 			}, {
@@ -31,7 +34,6 @@ describe('When a game is played', function () {
 		});
 
 		gameUnderTest.on('end', function (winner) {
-			console.log(winner);
 			winner.should.equal('Draw');
 			done();
 		});
@@ -41,8 +43,16 @@ describe('When a game is played', function () {
 
 	it('should be won by Alex when seed is 1', function (done) {
 		Math.seed = 1;
+		turn = proxyquire('../app/lib/turn', {
+			'./random': random
+		});
+
+		Game = proxyquire('../app/lib/game', {
+			'./turn': turn
+		});
 
 		var gameUnderTest = new Game({
+			hands: 10,
 			players: [{
 				name: 'Alex'
 			}, {
@@ -51,17 +61,25 @@ describe('When a game is played', function () {
 		});
 
 		gameUnderTest.on('end', function (winner) {
-			winner.should.equal('Draw')
+			winner.should.equal('Alex');
 			done();
 		});
 
 		gameUnderTest.start().catch(done);
 	});
 
-	it('should be won by Will when seed is 2', function (done) {
-		Math.seed = 2;
+	it('should be won by Will when seed is 5', function (done) {
+		Math.seed = 5;
+		turn = proxyquire('../app/lib/turn', {
+			'./random': random
+		});
+
+		Game = proxyquire('../app/lib/game', {
+			'./turn': turn
+		});
 
 		var gameUnderTest = new Game({
+			hands: 10,
 			players: [{
 				name: 'Alex'
 			}, {
@@ -70,8 +88,7 @@ describe('When a game is played', function () {
 		});
 
 		gameUnderTest.on('end', function (winner) {
-			console.log(winner);
-			winner.should.equal('Will')
+			winner.should.equal('Will');
 			done();
 		});
 

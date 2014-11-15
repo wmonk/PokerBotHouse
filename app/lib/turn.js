@@ -1,8 +1,6 @@
 var Promise = require('bluebird');
 var random = require('./random');
 
-console.log(random());
-
 var turnMethods = {
 	FOLD: function () {
 		this.emit('log', this.currentPlayer.name + ' FOLDED');
@@ -35,7 +33,7 @@ function turn(player, finish) {
 function getMove(player) {
 	var moves = ['BET', 'FOLD'];
 
-	return Promise.resolve(moves[Math.floor(random() * moves.length)])
-};
+	return Promise.resolve(moves[Math.floor(random() * moves.length)]);
+}
 
 module.exports = turn;
