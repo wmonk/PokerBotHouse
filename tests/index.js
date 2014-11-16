@@ -30,15 +30,21 @@ describe('When a game is played', function () {
 			}]
 		};
 
-		setupNock = function (url, fn, id) {
-			fn = fn || function () {
+		setupNock = function (url, moveFn, updateFn) {
+			moveFn = moveFn || function () {
 				return moves[Math.floor(random() * moves.length)];
 			};
 
-			interceptor[id || url] = nock(url)
+			updateFn = updateFn || function () {
+				return '';
+			};
+
+			interceptor[url] = nock(url)
 				.persist()
 				.get('/move')
-				.reply(200, fn);
+				.reply(200, moveFn)
+				.post('/update')
+				.reply(200, updateFn);
 		};
 
 		Game = proxyquire('../app/lib/game', {
@@ -52,7 +58,28 @@ describe('When a game is played', function () {
 		nock.cleanAll();
 	});
 
-	describe('when the seed is 12', function() {
+	describe('when the seed is 12', function () {
+		it('should deal each player a card', function (done) {
+			Math.seed = 12;
+			var alexCards = [];
+			var willCards = [];
+			setupNock('http://127.0.0.1:3030', undefined, function (url, card) {
+				alexCards.push(card.split('=')[1]);
+			});
+			setupNock('http://127.0.0.1:3000', undefined, function (url, card) {
+				willCards.push(card.split('=')[1]);
+			});
+
+			var gameUnderTest = new Game(testOptions);
+
+			gameUnderTest.start().catch(done);
+			gameUnderTest.on('end', function () {
+				alexCards.should.eql(['4', '6', '5', '3', '4', '2', '2', '3', '5', '5']);
+				willCards.should.eql(['3', '3', '10', '5', '2', '10', 'K', '3', '2', '8']);
+				done();
+			});
+		});
+
 		it('Will should have the first move', function (done) {
 			Math.seed = 12;
 			var calls = [];
@@ -76,7 +103,7 @@ describe('When a game is played', function () {
 			});
 		});
 
-		it('should be a draw', function (done) {
+		it('should be won by Alex', function (done) {
 			Math.seed = 12;
 			setupNock('http://127.0.0.1:3030');
 			setupNock('http://127.0.0.1:3000');
@@ -84,7 +111,7 @@ describe('When a game is played', function () {
 			var gameUnderTest = new Game(testOptions);
 
 			gameUnderTest.on('end', function (winner) {
-				winner.should.equal('Draw');
+				winner.should.equal('Alex');
 				done();
 			});
 
@@ -92,7 +119,28 @@ describe('When a game is played', function () {
 		});
 	});
 
-	describe('when the seed is 1', function() {
+	describe('when the seed is 1', function () {
+		it('should deal each player a card', function (done) {
+			Math.seed = 5;
+			var alexCards = [];
+			var willCards = [];
+			setupNock('http://127.0.0.1:3030', undefined, function (url, card) {
+				alexCards.push(card.split('=')[1]);
+			});
+			setupNock('http://127.0.0.1:3000', undefined, function (url, card) {
+				willCards.push(card.split('=')[1]);
+			});
+
+			var gameUnderTest = new Game(testOptions);
+
+			gameUnderTest.start().catch(done);
+			gameUnderTest.on('end', function () {
+				alexCards.should.eql(['6', '3', '3', '3', '9', '5', '4', '6', '2', '9']);
+				willCards.should.eql(['5', '3', '6', '9', '10', '5', '6', '5', 'K', '5']);
+				done();
+			});
+		});
+
 		it('Alex should have the first move', function (done) {
 			Math.seed = 5;
 			var calls = [];
@@ -116,7 +164,7 @@ describe('When a game is played', function () {
 			});
 		});
 
-		it('should be won by Alex', function (done) {
+		it('should be won by Will', function (done) {
 			Math.seed = 5;
 
 			var gameUnderTest = new Game(testOptions);
@@ -124,7 +172,7 @@ describe('When a game is played', function () {
 			setupNock('http://127.0.0.1:3000');
 
 			gameUnderTest.on('end', function (winner) {
-				winner.should.equal('Alex');
+				winner.should.equal('Will');
 				done();
 			});
 
@@ -132,8 +180,29 @@ describe('When a game is played', function () {
 		});
 	});
 
-	describe('when the seed is 5', function() {
-		it('Will should have the first move', function (done) {
+	describe('when the seed is 5', function () {
+		it('should deal each player a card', function (done) {
+			Math.seed = 11;
+			var alexCards = [];
+			var willCards = [];
+			setupNock('http://127.0.0.1:3030', undefined, function (url, card) {
+				alexCards.push(card.split('=')[1]);
+			});
+			setupNock('http://127.0.0.1:3000', undefined, function (url, card) {
+				willCards.push(card.split('=')[1]);
+			});
+
+			var gameUnderTest = new Game(testOptions);
+
+			gameUnderTest.start().catch(done);
+			gameUnderTest.on('end', function () {
+				alexCards.should.eql(['8', '5', '3', '5', '10', '9', '2', '2', '8', 'J']);
+				willCards.should.eql(['2', 'J', '3', '2', 'A', '9', '3', '3', '7', '2']);
+				done();
+			});
+		});
+
+		it('Alex should have the first move', function (done) {
 			Math.seed = 11;
 			var calls = [];
 
@@ -156,7 +225,7 @@ describe('When a game is played', function () {
 			});
 		});
 
-		it('should be won by Will', function (done) {
+		it('should be a DRAW', function (done) {
 			Math.seed = 11;
 
 			var gameUnderTest = new Game(testOptions);
@@ -164,14 +233,11 @@ describe('When a game is played', function () {
 			setupNock('http://127.0.0.1:3000');
 
 			gameUnderTest.on('end', function (winner) {
-				winner.should.equal('Will');
+				winner.should.equal('Draw');
 				done();
 			});
 
 			gameUnderTest.start().catch(done);
 		});
 	});
-
-
-
 });

@@ -1,9 +1,9 @@
 var Promise = require('bluebird');
-var Hand = require('./hand');
 var turn = require('./turn');
 var _ = require('lodash');
 var events = require('events');
 var util = require('util');
+var request = require('request');
 var random = require('./random');
 
 function Game(settings) {
@@ -78,38 +78,34 @@ Game.prototype.deal = function () {
 	});
 
 	function shuffle(o) {
-		for (var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+		for (var j, x, i = o.length; i; j = Math.floor(random() * i), x = o[--i], o[i] = o[j], o[j] = x);
 		return o;
 	}
 
 	deck = shuffle(deck);
 
 	this.players.forEach(function (player) {
-		player.card = deck[Math.floor(Math.random() * deck.length)];
+		player.card = deck[Math.floor(random() * deck.length)];
 	});
 
 	this.emit('log', 'Dealing');
 
-	// return Promise.all([
-	//     request({
-	//         url: this.player1.url + '/update',
-	//         method: 'post',
-	//         form: {
-	//             card: this.player1.card
-	//         }
-
-	//     }),
-	//     request({
-	//         url: this.player2.url + '/update',
-	//         method: 'post',
-	//         form: {
-	//             card: this.player2.card
-	//         }
-
-	//     })
-	// ]);
-
-	return Promise.resolve();
+	return Promise.all([
+	    request({
+	        url: this.player1.url + '/update',
+	        method: 'post',
+	        form: {
+	            card: this.player1.card
+	        }
+	    }),
+	    request({
+	        url: this.player2.url + '/update',
+	        method: 'post',
+	        form: {
+	            card: this.player2.card
+	        }
+	    })
+	]);
 };
 
 Game.prototype.handOver = function (winner) {
