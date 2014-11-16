@@ -2,7 +2,6 @@ require('chai').should();
 var proxyquire = require('proxyquire');
 var nock = require('nock');
 var Game;
-var turn;
 var testOptions;
 
 describe('When a game is played', function () {
@@ -15,22 +14,8 @@ describe('When a game is played', function () {
 
 		return min + rnd * (max - min);
 	};
+
 	var moves = ['BET', 'FOLD'];
-
-	nock('http://127.0.0.1:3030')
-		.persist()
-		.get('/move')
-		.reply(200, function () {
-			return moves[Math.floor(random() * moves.length)];
-		});
-
-	turn = proxyquire('../app/lib/turn', {
-		'./random': random
-	});
-
-	Game = proxyquire('../app/lib/game', {
-		'./turn': turn
-	});
 
 	beforeEach(function () {
 		testOptions = {
@@ -43,6 +28,22 @@ describe('When a game is played', function () {
 				url: 'http://127.0.0.1:3030'
 			}]
 		};
+
+		nock('http://127.0.0.1:3030')
+			.persist()
+			.get('/move')
+			.reply(200, function () {
+				return moves[Math.floor(random() * moves.length)];
+			});
+
+		Game = proxyquire('../app/lib/game', {
+			'./random': random,
+			'@global': true
+		});
+	});
+
+	after(function () {
+		nock.restore();
 	});
 
 	it('should be a draw when seed is 3', function (done) {
