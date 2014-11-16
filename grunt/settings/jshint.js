@@ -3,6 +3,6 @@ module.exports = {
         options: {
             jshintrc: true
         },
-        src: ['app/assets/js/**/*.js', '!node_modules/**', '!app/assets/js/**/*.compiled.js']
+        src: ['app/**/*.js', '!node_modules/**', '!app/assets/js/**/*.compiled.js']
     }
 };

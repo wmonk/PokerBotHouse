@@ -1,4 +1,4 @@
-function Hand (argument) {
+function Hand () {
 
 }
 
