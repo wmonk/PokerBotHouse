@@ -7,6 +7,7 @@ var request = require('request');
 var random = require('./random');
 
 function Game(settings) {
+	settings = _.clone(settings);
 	this.players = settings.players;
 	delete settings.players;
 
@@ -103,7 +104,7 @@ Game.prototype.deal = function () {
 	        method: 'post',
 	        form: {
 	            card: this.player2.card
-	        }
+		        }
 	    })
 	]);
 };
