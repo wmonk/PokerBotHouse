@@ -1,5 +1,6 @@
 var Promise = require('bluebird');
-var random = require('./random');
+var request = Promise.promisify(require('request'));
+// var random = require('./random');
 
 var turnMethods = {
 	FOLD: function () {
@@ -17,7 +18,7 @@ function turn(player, finish) {
 	this.emit('log', 'pot: ' + this.pot);
 	this.currentPlayer = player;
 
-	getMove(player)
+	getMove.call(this, player)
 		.bind(this)
 		.then(function (move) {
 			turnMethods[move].call(this);
@@ -31,9 +32,16 @@ function turn(player, finish) {
 }
 
 function getMove() {
-	var moves = ['BET', 'FOLD'];
+	return request({
+		method: 'get',
+		url: this.currentPlayer.url + '/move'
+	})
+	.spread(function (resp, body) {
+		return body;
+	});
 
-	return Promise.resolve(moves[Math.floor(random() * moves.length)]);
+	// var moves = ['BET', 'FOLD'];
+	// return Promise.resolve(moves[Math.floor(random() * moves.length)]);
 }
 
 module.exports = turn;

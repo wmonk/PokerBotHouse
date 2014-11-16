@@ -16,6 +16,7 @@
     "hbs": "~2.7.0",
     "morgan": "^1.4.1",
     "proxyquire": "^1.0.1",
+    "request": "^2.48.0",
     "serve-favicon": "^2.1.6"
   },
   "devDependencies": {
@@ -37,6 +38,7 @@
     "jit-grunt": "^0.9.0",
     "lodash": "^2.4.1",
     "mocha": "^2.0.1",
+    "nock": "^0.50.0",
     "time-grunt": "^1.0.0"
   }
 }
