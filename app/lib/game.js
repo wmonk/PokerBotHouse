@@ -4,6 +4,7 @@ var turn = require('./turn');
 var _ = require('lodash');
 var events = require('events');
 var util = require('util');
+var random = require('./random');
 
 function Game(settings) {
 	this.players = settings.players;
@@ -18,8 +19,11 @@ function Game(settings) {
 		player.chips = this.settings.chips;
 	}.bind(this));
 
-	this.player1 = this.players[0];
-	this.player2 = this.players[1];
+	var firstPlayer = Math.floor(random() * this.players.length);
+	var secondPlayer = firstPlayer === 1 ? 0 : 1;
+
+	this.player1 = this.players[firstPlayer];
+	this.player2 = this.players[secondPlayer];
 }
 
 util.inherits(Game, events.EventEmitter);
@@ -132,7 +136,6 @@ Game.prototype.handOver = function (winner) {
 
 Game.prototype.playHand = function () {
 	return new Promise(function (res) {
-		this.will = 'monk';
 		turn.call(this, this.currentPlayer, res);
 	}.bind(this));
 };

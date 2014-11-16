@@ -28,7 +28,8 @@ function turn(player, finish) {
 			}
 
 			turn.call(this, this.opposingPlayer(), finish);
-		});
+		})
+		.catch(this.rejectGame);
 }
 
 function getMove() {
@@ -36,8 +37,12 @@ function getMove() {
 		method: 'get',
 		url: this.currentPlayer.url + '/move'
 	})
+	.bind(this)
 	.spread(function (resp, body) {
 		return body;
+	})
+	.catch(function (err) {
+		console.log(err, this.currentPlayer.url);
 	});
 
 	// var moves = ['BET', 'FOLD'];
